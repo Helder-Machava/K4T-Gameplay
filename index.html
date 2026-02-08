@@ -1,0 +1,516 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Quiz Logística & Tesouraria</title>
+
+  <!-- Confetti (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body{
+      font-family: Arial, sans-serif;
+      background:#0e3bb0;
+      margin:0;
+      padding:0;
+    }
+    .wrap{
+      max-width: 920px;
+      margin: 28px auto;
+      padding: 18px;
+    }
+    .card{
+      background:#fff;
+      border-radius:12px;
+      padding:20px;
+      box-shadow: 0 10px 25px rgba(0,0,0,.15);
+      color:#222;
+    }
+    h1{ margin: 6px 0 10px; color:#0e3bb0; text-align:center; }
+
+    .topbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      background:#f2f5ff;
+      border: 1px solid #d7e1ff;
+      padding: 8px 12px;
+      border-radius:999px;
+      font-weight:700;
+      color:#0e3bb0;
+    }
+    .timer{
+      color:#c0392b;
+      background:#fff4f4;
+      border-color:#ffd6d6;
+    }
+
+    .progress{
+      font-weight:700;
+      color:#333;
+    }
+
+    .question{
+      font-size: 18px;
+      margin: 14px 0 12px;
+      line-height: 1.35;
+    }
+
+    .options label{
+      display:block;
+      padding: 10px 12px;
+      border: 1px solid #e6e6e6;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      cursor:pointer;
+      transition: background .15s ease, border-color .15s ease;
+      user-select:none;
+    }
+    .options label:hover{
+      background:#f6f8ff;
+      border-color:#c9d6ff;
+    }
+    .options input{ margin-right:10px; }
+
+    .nav{
+      display:flex;
+      gap:10px;
+      margin-top: 14px;
+      flex-wrap:wrap;
+      justify-content: space-between;
+      align-items:center;
+    }
+    .btn{
+      border:none;
+      padding: 12px 16px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight: 800;
+      font-size: 15px;
+    }
+    .btn-primary{ background:#0e3bb0; color:#fff; }
+    .btn-primary:hover{ background:#0b2f8a; }
+    .btn-ghost{ background:#f3f5f9; color:#222; }
+    .btn-ghost:hover{ background:#e9eef8; }
+    .btn-danger{ background:#c0392b; color:#fff; }
+    .btn-danger:hover{ background:#a83226; }
+
+    .hint{
+      font-size: 13px;
+      color:#666;
+    }
+
+    /* Slides */
+    .slide{ display:none; }
+    .slide.active{ display:block; }
+
+    /* Result */
+    .resultBox{
+      text-align:center;
+      padding: 10px 0 6px;
+    }
+    .score{
+      font-size: 44px;
+      font-weight: 900;
+      margin: 8px 0;
+      color:#0e3bb0;
+    }
+    .status{
+      font-size: 18px;
+      font-weight: 900;
+      margin: 10px 0;
+    }
+    .approved{ color:#1e7d33; }
+    .failed{ color:#c0392b; }
+
+    .meta{
+      margin-top: 10px;
+      color:#444;
+      font-size: 14px;
+    }
+
+    .review{
+      margin-top: 16px;
+      text-align:left;
+      background:#f8fafc;
+      border:1px solid #e6e6e6;
+      border-radius: 12px;
+      padding: 14px;
+    }
+    .review h3{
+      margin: 0 0 10px;
+      color:#0e3bb0;
+    }
+    .reviewItem{
+      padding: 10px 10px;
+      border-radius: 10px;
+      border:1px solid #e8e8e8;
+      background:#fff;
+      margin-bottom: 10px;
+    }
+    .tag{
+      display:inline-block;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-left: 8px;
+    }
+    .tag.ok{ background:#e9f7ee; color:#1e7d33; border:1px solid #bfe9cb;}
+    .tag.no{ background:#fff0f0; color:#c0392b; border:1px solid #ffd1d1;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+
+      <!-- SLIDE 1: QUIZ -->
+      <div id="slideQuiz" class="slide active">
+        <div class="topbar">
+          <div class="pill timer">⏳ Tempo: <span id="timerTxt">02:00:00</span></div>
+          <div class="pill progress">Pergunta: <span id="qIndexTxt">1</span>/<span id="qTotalTxt">0</span></div>
+        </div>
+
+        <h1>Exame de Logística & Tesouraria</h1>
+
+        <div class="question" id="questionTxt"></div>
+        <div class="options" id="optionsWrap"></div>
+
+        <div class="nav">
+          <button class="btn btn-ghost" id="btnPrev" onclick="goPrev()">⬅ Voltar</button>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button class="btn btn-ghost" onclick="toggleMark()">📌 Marcar dúvida</button>
+            <button class="btn btn-primary" id="btnNext" onclick="goNext()">Seguinte ➜</button>
+            <button class="btn btn-danger" id="btnFinish" onclick="finishQuiz('manual')" style="display:none;">Terminar</button>
+          </div>
+        </div>
+
+        <div class="hint" id="hintTxt" style="margin-top:10px;"></div>
+      </div>
+
+      <!-- SLIDE 2: RESULTADO -->
+      <div id="slideResult" class="slide">
+        <h1>Resultado</h1>
+        <div class="resultBox">
+          <div class="score" id="scoreTxt">0%</div>
+          <div class="status" id="statusTxt"></div>
+          <div class="meta" id="metaTxt"></div>
+        </div>
+
+        <div class="nav" style="justify-content:center;">
+          <button class="btn btn-ghost" onclick="restartQuiz()">🔄 Recomeçar</button>
+          <button class="btn btn-primary" onclick="showReview()">📋 Ver correção</button>
+        </div>
+
+        <div class="review" id="reviewBox" style="display:none;"></div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  /* ==========================
+     QUESTÕES (EXEMPLO)
+     👉 Substitui por todas as 100 do ficheiro no mesmo formato
+     ========================== */
+  const questions = [
+    {
+      pergunta: "Para que um documento de venda seja automaticamente liquidado, deve:",
+      opcoes: [
+        "Configurar a ficha do documento indicando que 'Efectua liquidação automática' e qual o documento que é gerado.",
+        "Configurar o documento como 'documento de venda a dinheiro'.",
+        "Configurar o documento para que tenha ligação a 'Bancos'.",
+        "Os documentos de vendas não podem ser automaticamente liquidados."
+      ],
+      correta: 0
+    },
+    {
+      pergunta: "Na conversão de guias de remessa de clientes, qual o documento destino sugerido?",
+      opcoes: [
+        "O definido nos Parâmetros da Logística",
+        "O documento indicado no fluxo documental",
+        "A série por defeito",
+        "Nenhuma das opções"
+      ],
+      correta: 1
+    },
+    {
+      pergunta: "Os vendedores são sugeridos nos documentos de vendas com base em:",
+      opcoes: [
+        "Chefes de vendedores",
+        "Regras de comissões",
+        "Entidades associadas",
+        "Nenhuma das opções"
+      ],
+      correta: 1
+    }
+  ];
+
+  /* ==========================
+     ESTADO DO JOGO
+     ========================== */
+  const PASS_MARK = 60;
+  const TOTAL_TIME_SECONDS = 2 * 60 * 60; // 2 horas
+
+  let currentIndex = 0;
+  let answers = new Array(questions.length).fill(null); // guarda resposta do utilizador (0..3)
+  let marked = new Array(questions.length).fill(false); // dúvidas
+  let finished = false;
+
+  // Timer
+  let timeLeft = TOTAL_TIME_SECONDS;
+  let timerInterval = null;
+  let startedAt = Date.now();
+
+  /* ==========================
+     HELPERS
+     ========================== */
+  function pad2(n){ return String(n).padStart(2,'0'); }
+  function formatHMS(totalSeconds){
+    const h = Math.floor(totalSeconds / 3600);
+    const m = Math.floor((totalSeconds % 3600) / 60);
+    const s = totalSeconds % 60;
+    return `${pad2(h)}:${pad2(m)}:${pad2(s)}`;
+  }
+  function setSlide(which){
+    document.getElementById('slideQuiz').classList.remove('active');
+    document.getElementById('slideResult').classList.remove('active');
+    document.getElementById(which).classList.add('active');
+  }
+  function getTimeUsedSeconds(){
+    return TOTAL_TIME_SECONDS - timeLeft;
+  }
+
+  /* ==========================
+     RENDER DA PERGUNTA
+     ========================== */
+  function render(){
+    document.getElementById('qTotalTxt').textContent = questions.length;
+    document.getElementById('qIndexTxt').textContent = currentIndex + 1;
+
+    const q = questions[currentIndex];
+    document.getElementById('questionTxt').textContent = `${currentIndex + 1}. ${q.pergunta}`;
+
+    // opções
+    const wrap = document.getElementById('optionsWrap');
+    wrap.innerHTML = "";
+
+    q.opcoes.forEach((text, i) => {
+      const id = `opt_${currentIndex}_${i}`;
+      const label = document.createElement('label');
+      label.htmlFor = id;
+
+      const input = document.createElement('input');
+      input.type = "radio";
+      input.name = "option";
+      input.value = i;
+      input.id = id;
+
+      // manter resposta ao voltar/avançar
+      if (answers[currentIndex] === i) input.checked = true;
+
+      input.addEventListener('change', () => {
+        answers[currentIndex] = i;
+        refreshHint();
+        refreshButtons();
+      });
+
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(text));
+      wrap.appendChild(label);
+    });
+
+    refreshHint();
+    refreshButtons();
+  }
+
+  function refreshHint(){
+    const hasAnswer = answers[currentIndex] !== null;
+    const isMarked = marked[currentIndex];
+
+    let msg = "";
+    if (!hasAnswer) msg = "⚠️ Ainda não respondeu esta pergunta.";
+    else msg = "✅ Resposta guardada. Podes voltar e alterar quando quiseres.";
+
+    if (isMarked) msg += "  |  📌 Marcada como dúvida.";
+    document.getElementById('hintTxt').textContent = msg;
+  }
+
+  function refreshButtons(){
+    document.getElementById('btnPrev').disabled = (currentIndex === 0);
+
+    // Mostrar "Terminar" quando for a última
+    const isLast = (currentIndex === questions.length - 1);
+    document.getElementById('btnFinish').style.display = isLast ? "inline-block" : "none";
+    document.getElementById('btnNext').style.display = isLast ? "none" : "inline-block";
+  }
+
+  function toggleMark(){
+    marked[currentIndex] = !marked[currentIndex];
+    refreshHint();
+  }
+
+  /* ==========================
+     NAVEGAÇÃO
+     ========================== */
+  function goPrev(){
+    if (finished) return;
+    if (currentIndex > 0){
+      currentIndex--;
+      render();
+    }
+  }
+
+  function goNext(){
+    if (finished) return;
+    if (currentIndex < questions.length - 1){
+      currentIndex++;
+      render();
+    }
+  }
+
+  /* ==========================
+     TIMER
+     ========================== */
+  function startTimer(){
+    document.getElementById('timerTxt').textContent = formatHMS(timeLeft);
+
+    timerInterval = setInterval(() => {
+      if (finished) return; // segurança
+      timeLeft--;
+      document.getElementById('timerTxt').textContent = formatHMS(Math.max(timeLeft, 0));
+
+      if (timeLeft <= 0){
+        finishQuiz('timeout');
+      }
+    }, 1000);
+  }
+
+  function stopTimer(){
+    if (timerInterval){
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  /* ==========================
+     RESULTADO
+     ========================== */
+  function computeScore(){
+    let correct = 0;
+    for (let i = 0; i < questions.length; i++){
+      if (answers[i] !== null && answers[i] === questions[i].correta) correct++;
+    }
+    const percent = Math.round((correct / questions.length) * 100);
+    return { correct, percent };
+  }
+
+  function launchConfetti(){
+    // “burst” inicial
+    confetti({ particleCount: 220, spread: 95, origin: { y: 0.7 }});
+    // um extra rápido
+    setTimeout(() => confetti({ particleCount: 160, spread: 80, origin: { y: 0.6 }}), 250);
+  }
+
+  function finishQuiz(reason){
+    if (finished) return;
+
+    finished = true;
+    stopTimer();
+
+    const { correct, percent } = computeScore();
+    const passed = percent >= PASS_MARK;
+
+    const used = getTimeUsedSeconds();
+    const usedTxt = formatHMS(used);
+    const leftTxt = formatHMS(Math.max(timeLeft, 0));
+
+    setSlide('slideResult');
+
+    document.getElementById('scoreTxt').textContent = `${percent}%`;
+    document.getElementById('statusTxt').innerHTML = passed
+      ? `<span class="approved">🎉 Aprovado (>= ${PASS_MARK}%)</span>`
+      : `<span class="failed">❌ Não aprovado (mínimo ${PASS_MARK}%)</span>`;
+
+    const why = (reason === 'timeout')
+      ? "⏰ Tempo esgotado."
+      : "✅ Teste terminado.";
+
+    document.getElementById('metaTxt').innerHTML =
+      `${why}<br>` +
+      `Acertos: <b>${correct}</b> / <b>${questions.length}</b><br>` +
+      `Tempo usado: <b>${usedTxt}</b> • Tempo restante: <b>${leftTxt}</b>`;
+
+    if (passed) launchConfetti();
+  }
+
+  function showReview(){
+    const box = document.getElementById('reviewBox');
+    box.style.display = (box.style.display === 'none') ? 'block' : 'none';
+    if (box.innerHTML.trim() === "") buildReview();
+  }
+
+  function buildReview(){
+    const box = document.getElementById('reviewBox');
+    box.innerHTML = `<h3>Correção (Pergunta a Pergunta)</h3>`;
+
+    questions.forEach((q, i) => {
+      const user = answers[i];
+      const ok = (user !== null && user === q.correta);
+
+      const userTxt = (user === null) ? "Sem resposta" : q.opcoes[user];
+      const correctTxt = q.opcoes[q.correta];
+
+      const div = document.createElement('div');
+      div.className = 'reviewItem';
+      div.innerHTML = `
+        <div style="font-weight:900; margin-bottom:8px;">
+          ${i+1}. ${q.pergunta}
+          <span class="tag ${ok ? 'ok' : 'no'}">${ok ? 'Certo' : 'Errado'}</span>
+        </div>
+        <div><b>Sua resposta:</b> ${userTxt}</div>
+        <div><b>Correta:</b> ${correctTxt}</div>
+      `;
+      box.appendChild(div);
+    });
+  }
+
+  function restartQuiz(){
+    // reset geral
+    currentIndex = 0;
+    answers = new Array(questions.length).fill(null);
+    marked = new Array(questions.length).fill(false);
+    finished = false;
+
+    timeLeft = TOTAL_TIME_SECONDS;
+    startedAt = Date.now();
+
+    document.getElementById('reviewBox').style.display = 'none';
+    document.getElementById('reviewBox').innerHTML = "";
+
+    setSlide('slideQuiz');
+    render();
+
+    stopTimer();
+    startTimer();
+  }
+
+  /* ==========================
+     INIT
+     ========================== */
+  render();
+  startTimer();
+</script>
+</body>
+</html>
