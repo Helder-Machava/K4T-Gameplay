@@ -1,0 +1,157 @@
+body{
+  margin:0;
+  font-family: Arial, sans-serif;
+  background:#0e3bb0;
+}
+
+.wrap{
+  max-width: 960px;
+  margin: 30px auto;
+  padding: 15px;
+}
+
+.card{
+  background:#fff;
+  border-radius: 14px;
+  padding: 22px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.15);
+}
+
+h1{ text-align:center; color:#0e3bb0; }
+
+.slide{ display:none; }
+.slide.active{ display:block; }
+
+.topbar{
+  display:flex;
+  justify-content: space-between; /* space-between como pediste */
+  align-items:center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.top-title{
+  font-size: 12px; /* fonte bem reduzida */
+  line-height: 1.1;
+  padding-inline: 8px;
+}
+
+.pill{
+  background:#eef2ff;
+  border: 1px solid #d0d8ff;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-weight: 700;
+  color:#0e3bb0;
+  white-space: nowrap;
+}
+
+.timer{
+  color:#c0392b;
+  background:#fff0f0;
+  border-color:#ffd1d1;
+}
+
+.question{
+  font-size: 18px;
+  margin: 15px 0;
+}
+
+.options label{
+  display:flex;
+  align-items:flex-start;
+  gap: 10px;
+  padding: 12px 12px;
+  border:1px solid #e5e5e5;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  cursor:pointer;
+}
+
+.options label:hover{ background:#f5f7ff; }
+
+.optLetter{
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 900;
+  border:1px solid #d0d8ff;
+  background:#eef2ff;
+  color:#0e3bb0;
+  flex: 0 0 auto;
+}
+
+.options input{
+  margin-top: 6px;
+}
+
+.nav{
+  display:flex;
+  justify-content: space-between;
+  margin-top: 18px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.nav.center{ justify-content: center; }
+
+.nav-right{
+  display:flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-ghost{
+  background:#f1f3f8 !important;
+}
+
+.hint{
+  margin-top: 12px;
+  font-size: 13px;
+  color:#666;
+}
+
+.resultBox{
+  text-align:center;
+  margin-top: 10px;
+}
+
+.score{
+  font-size: 48px;
+  font-weight: 900;
+  color:#0e3bb0;
+}
+
+.status{
+  font-size: 18px;
+  font-weight: 800;
+  margin: 10px 0;
+}
+
+.meta{
+  font-size: 14px;
+  color:#444;
+}
+
+.review{
+  margin-top: 20px;
+  background:#f8fafc;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #e6e6e6;
+}
+
+.reviewItem{
+  background:#fff;
+  border:1px solid #e6e6e6;
+  padding: 12px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.ok{ color:#1e7d33; }
+.no{ color:#c0392b; }
