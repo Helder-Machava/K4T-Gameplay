@@ -1,3 +1,6 @@
+/* =========================
+     style.css
+========================= */
 body{
   margin:0;
   font-family: Arial, sans-serif;
@@ -24,7 +27,7 @@ h1{ text-align:center; color:#0e3bb0; }
 
 .topbar{
   display:flex;
-  justify-content: space-between; /* space-between como pediste */
+  justify-content: space-between;
   align-items:center;
   gap: 12px;
   flex-wrap: wrap;
@@ -32,7 +35,7 @@ h1{ text-align:center; color:#0e3bb0; }
 }
 
 .top-title{
-  font-size: 12px; /* fonte bem reduzida */
+  font-size: 12px;
   line-height: 1.1;
   padding-inline: 8px;
 }
@@ -89,9 +92,11 @@ h1{ text-align:center; color:#0e3bb0; }
   margin-top: 6px;
 }
 
+/* ✅ NAV com space-between (esq: voltar/seguinte | dir: terminar) */
 .nav{
   display:flex;
   justify-content: space-between;
+  align-items:center;
   margin-top: 18px;
   flex-wrap: wrap;
   gap: 10px;
@@ -99,10 +104,21 @@ h1{ text-align:center; color:#0e3bb0; }
 
 .nav.center{ justify-content: center; }
 
-.nav-right{
+/* container ESQUERDA */
+.nav-left{
   display:flex;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* botão terminar com vermelho mais suave */
+#btnFinish.btn-danger{
+  background:#dc3545;
+  border-color:#dc3545;
+  opacity: .92;
+}
+#btnFinish.btn-danger:hover{
+  opacity: 1;
 }
 
 .btn-ghost{
